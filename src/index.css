@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900;
+  }
+
+  :root {
+    --meta-gradient: linear-gradient(120deg, #1877F2, #2851E3);
+  }
+}
+
+@layer components {
+  .meta-gradient {
+    @apply bg-gradient-to-r from-[#1877F2] to-[#2851E3];
+  }
+
+  .glass-effect {
+    @apply bg-white/80 dark:bg-gray-900/80 backdrop-blur-md;
+  }
+
+  .glass-card {
+    @apply bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm;
+  }
+
+  .nav-item {
+    @apply px-4 py-2 rounded-lg transition-colors hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-2;
+  }
+
+  .nav-item.active {
+    @apply bg-black/10 dark:bg-white/10;
+  }
+}
