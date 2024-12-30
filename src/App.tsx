@@ -39,6 +39,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const { toast } = useToast();
 
+  console.log("ProtectedRoute - Auth State:", {
+    isAuthenticated,
+    hasTokens: !!tokens,
+    currentPath: location.pathname,
+  });
+
   useEffect(() => {
     if (!isAuthenticated || !tokens) {
       toast({
@@ -50,6 +56,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }, [isAuthenticated, tokens, toast]);
 
   if (!isAuthenticated || !tokens) {
+    console.log("Redirecting to login from:", location.pathname);
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

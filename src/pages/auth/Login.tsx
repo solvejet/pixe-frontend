@@ -1,6 +1,6 @@
 // src/pages/auth/Login.tsx
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react";
 import { z } from "zod";
@@ -16,6 +16,7 @@ const loginSchema = z.object({
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const {
     login,
@@ -24,16 +25,22 @@ export default function LoginPage() {
     clearError,
     isAuthenticated,
   } = useAuthStore();
+
+  // Form state
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
+  // Handle existing authentication
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/");
+      console.log("Auth state detected, redirecting...");
+      const from = location.state?.from?.pathname || "/";
+      console.log("Redirect target:", from);
+      navigate(from, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, location]);
 
   const validateForm = () => {
     try {
@@ -61,13 +68,21 @@ export default function LoginPage() {
     if (!validateForm()) return;
 
     try {
-      await login(formData);
+      console.log("Attempting login...");
+      const response = await login(formData);
+      console.log("Login successful:", response);
+
       toast({
         title: "Success!",
         description: "Welcome back! You've been successfully logged in.",
       });
-      navigate("/");
+
+      // Navigate after successful login
+      const from = location.state?.from?.pathname || "/";
+      console.log("Navigating to:", from);
+      navigate(from, { replace: true });
     } catch (error) {
+      console.error("Login failed:", error);
       toast({
         variant: "destructive",
         title: "Error!",
@@ -122,6 +137,7 @@ export default function LoginPage() {
               )}
             </AnimatePresence>
 
+            {/* Email Field */}
             <div className="space-y-2">
               <label
                 htmlFor="email"
@@ -147,6 +163,7 @@ export default function LoginPage() {
               )}
             </div>
 
+            {/* Password Field */}
             <div className="space-y-2">
               <label
                 htmlFor="password"
@@ -182,6 +199,7 @@ export default function LoginPage() {
               )}
             </div>
 
+            {/* Remember me and Forgot password */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <Checkbox
@@ -206,6 +224,7 @@ export default function LoginPage() {
               </button>
             </div>
 
+            {/* Submit Button */}
             <motion.button
               type="submit"
               disabled={isLoading}
